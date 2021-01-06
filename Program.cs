@@ -24,8 +24,4 @@ namespace MedicalMask
                 });
     }
 
-    public class Rootobject
-    {
-        public MaskInfo[] Property1 { get; set; }
-    }
 }
