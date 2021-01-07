@@ -48,7 +48,21 @@
             |___||_|       /   \\\/\\  
             ```
 
----  
-<a href="https://blog.kkbruce.net/2020/02/ef-core-sqlite.html#.X_LWB9j7SUk" target="_blank">KingKong Bruce記事的 - 簡單五步驟：以EF Core整合SQLite儲存口罩剩餘數量資訊</a>
+    
 
-<a href="https://data.gov.tw/dataset/116285">政府資料開放平台：健保特約機構口罩剩餘數量明細清單</a>
+---  
+### 參考資料：  
+<a href="https://blog.kkbruce.net/2020/02/ef-core-sqlite.html#.X_LWB9j7SUk" target="_blank">KingKong Bruce記事的 - 簡單五步驟：以EF Core整合SQLite儲存口罩剩餘數量資訊</a>  
+
+<a href="https://data.gov.tw/dataset/116285">政府資料開放平台：健保特約機構口罩剩餘數量明細清單</a>  
+
+<a href="https://stackoverflow.com/questions/58986882/asyncenumerablereader-reached-the-configured-maximum-size-of-the-buffer-when-e">'AsyncEnumerableReader' reached the configured maximum size of the buffer when enumerating a value</a>
+![](AsyncEnumerableReader%20reached%20the%20configured%20maximum%20size.png)
+* 假設回傳資料量過大會跳出上述錯誤
+    1. 別傳太多資料
+    2. 修改回傳上限(預設8192)
+        ```csharp
+        services.AddControllers(options => options.MaxIAsyncEnumerableBufferLimit = N)
+        ```
+    3. 不要使用IAsyncEnumerable  
+        用ToList()之類的回傳
