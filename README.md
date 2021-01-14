@@ -1,7 +1,7 @@
 # MedicalMask
+- - -
 
-
-實作內容：  
+## 以EF Core整合SQLite儲存口罩剩餘數量資訊  
 
 * 建立API串接第三方平台
     1. 製作 Model
@@ -46,11 +46,22 @@
             | __|| __|  |  )   \\\  
             | _| | _|   \_/ |  //|\\  
             |___||_|       /   \\\/\\  
-            ```
+            ```  
+            
 
+## 整合Hangfire來排程更新口罩剩餘數量資料  
+*  安裝 HANGFIRE + SQLITE 套件  
+    ```csharp
+    # PowerShell
+    Install-Package HangFire.Core -Version 1.7.18
+    Install-Package Hangfire.AspNetCore -Version 1.7.18
+    Install-Package Hangfire.Storage.SQLite -Version 0.2.4
+    Install-Package sqlite-net-pcl -Version 1.7.335
+    ```
+        
     
 
----  
+- - -  
 ### 參考資料：  
 <a href="https://blog.kkbruce.net/2020/02/ef-core-sqlite.html#.X_LWB9j7SUk" target="_blank">簡單五步驟：以EF Core整合SQLite儲存口罩剩餘數量資訊</a>  
 
