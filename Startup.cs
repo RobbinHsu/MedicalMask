@@ -1,15 +1,11 @@
+using System;
+using Hangfire;
+using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MedicalMask
 {
@@ -28,6 +24,12 @@ namespace MedicalMask
             services.AddControllers();
             services.AddHttpClient<MaskService>();
             services.AddScoped<MaskContext>();
+
+            services.AddHangfire(configuration => configuration
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSQLiteStorage());
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,8 +46,15 @@ namespace MedicalMask
 
             app.UseAuthorization();
 
+            app.UseHangfireDashboard();
+            BackgroundJob.Enqueue(() => Console.WriteLine("Hello HangFire."));
+            RecurringJob.AddOrUpdate("Hello", () => Console.WriteLine("Hello, recurringJob."), Cron.Minutely());
+
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllers();
             });
         }

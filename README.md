@@ -50,7 +50,7 @@
             
 
 ## 整合Hangfire來排程更新口罩剩餘數量資料  
-*  安裝 HANGFIRE + SQLITE 套件  
+* 安裝 HANGFIRE + SQLITE 套件  
     ```csharp
     # PowerShell
     Install-Package HangFire.Core -Version 1.7.18
@@ -58,18 +58,48 @@
     Install-Package Hangfire.Storage.SQLite -Version 0.2.4
     Install-Package sqlite-net-pcl -Version 1.7.335
     ```
-        
+* 加入 HANGFIRE 組態
+    ```csharp
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddHangfire(configuration => configuration
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseSQLiteStorage());
+        services.AddHangfireServer();
+    }
+    ```
+    先測試HangFire是否正常執行。  
+    另外，recurringJob 支援Cron 設定。  
+    ```csharp
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        app.UseHangfireDashboard();
+        BackgroundJob.Enqueue(() => Console.WriteLine("Hello HangFire."));
+        RecurringJob.AddOrUpdate("Hello", () => Console.WriteLine("Hello, recurringJob."), Cron.Minutely());
+    }
+    ```
+    因為 Hangfire 走的是 MVC 路由，而我們開的是 Web API 專案，預設情況下吃不到 MVC 路由。
+    ```csharp
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+        });
+    }
+    ```  
     
-
 - - -  
 ### 參考資料：  
+
 <a href="https://blog.kkbruce.net/2020/02/ef-core-sqlite.html#.X_LWB9j7SUk" target="_blank">簡單五步驟：以EF Core整合SQLite儲存口罩剩餘數量資訊</a>  
-
 <a href="https://blog.kkbruce.net/2020/04/aspnet-core-hangfire-sqlite.html#.X_15Ouj7SUk" target="_blank">
-簡單五步驟：ASP.NET CORE整合HANGFIRE來排程更新口罩剩餘數量資料</a>
-
+簡單五步驟：ASP.NET CORE整合HANGFIRE來排程更新口罩剩餘數量資料</a>  
 <a href="https://data.gov.tw/dataset/116285">政府資料開放平台：健保特約機構口罩剩餘數量明細清單</a>  
-
+<a href="https://crontab.guru/">Crontab guru - 快速測試出所需的 Cron 設定</a>  
 <a href="https://stackoverflow.com/questions/58986882/asyncenumerablereader-reached-the-configured-maximum-size-of-the-buffer-when-e">'AsyncEnumerableReader' reached the configured maximum size of the buffer when enumerating a value</a>
 ![](AsyncEnumerableReader%20reached%20the%20configured%20maximum%20size.png)
 * 假設回傳資料量過大會跳出上述錯誤
