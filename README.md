@@ -52,7 +52,10 @@
 
 ---  
 ### 參考資料：  
-<a href="https://blog.kkbruce.net/2020/02/ef-core-sqlite.html#.X_LWB9j7SUk" target="_blank">KingKong Bruce記事的 - 簡單五步驟：以EF Core整合SQLite儲存口罩剩餘數量資訊</a>  
+<a href="https://blog.kkbruce.net/2020/02/ef-core-sqlite.html#.X_LWB9j7SUk" target="_blank">簡單五步驟：以EF Core整合SQLite儲存口罩剩餘數量資訊</a>  
+
+<a href="https://blog.kkbruce.net/2020/04/aspnet-core-hangfire-sqlite.html#.X_15Ouj7SUk" target="_blank">
+簡單五步驟：ASP.NET CORE整合HANGFIRE來排程更新口罩剩餘數量資料</a>
 
 <a href="https://data.gov.tw/dataset/116285">政府資料開放平台：健保特約機構口罩剩餘數量明細清單</a>  
 
