@@ -49,7 +49,7 @@
             ```  
             
 
-## 整合Hangfire來排程更新口罩剩餘數量資料  
+## Hangfire設定  
 * 安裝 HANGFIRE + SQLITE 套件  
     ```csharp
     # PowerShell
@@ -91,6 +91,25 @@
         });
     }
     ```  
+## 整合 Hangfire 來排程更新口罩剩餘數量資料  
+* MaskService 有使用到 HttpClient ，改為使用 IHttpClientFactory 注入
+    ```csharp
+        private HttpClient _client;
+
+        public MaskService(IHttpClientFactory client)
+        {
+            _client = client.CreateClient();
+            _client.BaseAddress = new Uri("https://www..../");
+        }
+    ```
+* 將原本 MaskController 裡面下載/更新資料庫的行為改由 MaskSchedule 處理，再由 HangFire 執行  
+    ```csharp
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            BackgroundJob.Enqueue<MaskSchedule>(x => x.InitialDb());
+            RecurringJob.AddOrUpdate<MaskSchedule>("MaskDataUpdate", x => x.MaskDataUpdate(), Cron.Minutely());
+        }
+    ```
     
 - - -  
 ### 參考資料：  
@@ -98,6 +117,7 @@
 * <a href="https://blog.kkbruce.net/2020/02/ef-core-sqlite.html#.X_LWB9j7SUk" target="_blank">簡單五步驟：以EF Core整合SQLite儲存口罩剩餘數量資訊</a>  
 * <a href="https://blog.kkbruce.net/2020/04/aspnet-core-hangfire-sqlite.html#.X_15Ouj7SUk" target="_blank">簡單五步驟：ASP.NET CORE整合HANGFIRE來排程更新口罩剩餘數量資料</a>  
 * <a href="https://data.gov.tw/dataset/116285">政府資料開放平台：健保特約機構口罩剩餘數量明細清單</a>  
+* <a href="https://www.hangfire.io/">HangFire</a>  
 * <a href="https://crontab.guru/">Crontab guru - 快速測試出所需的 Cron 設定</a>  
 * <a href="https://docs.microsoft.com/zh-tw/aspnet/core/fundamentals/http-requests?view=aspnetcore-5.0">在 ASP.NET Core 中使用 IHttpClientFactory 發出 HTTP 要求</a>  
 * <a href="https://stackoverflow.com/questions/58986882/asyncenumerablereader-reached-the-configured-maximum-size-of-the-buffer-when-e">AsyncEnumerableReader' reached the configured maximum size of the buffer when enumerating a value</a>

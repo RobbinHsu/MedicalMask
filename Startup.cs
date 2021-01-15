@@ -1,6 +1,7 @@
 using System;
 using Hangfire;
 using Hangfire.Storage.SQLite;
+using MedicalMask.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -49,8 +50,8 @@ namespace MedicalMask
             app.UseAuthorization();
 
             app.UseHangfireDashboard();
-            BackgroundJob.Enqueue(() => Console.WriteLine("Hello HangFire."));
-            RecurringJob.AddOrUpdate("Hello", () => Console.WriteLine("Hello, recurringJob."), Cron.Minutely());
+            BackgroundJob.Enqueue<MaskSchedule>(x => x.InitialDb());
+            RecurringJob.AddOrUpdate<MaskSchedule>("MaskDataUpdate", x => x.MaskDataUpdate(), Cron.Minutely());
 
             app.UseEndpoints(endpoints =>
             {
