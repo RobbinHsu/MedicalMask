@@ -22,7 +22,9 @@ namespace MedicalMask
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddHttpClient<MaskService>();
+            services.AddHttpClient();
+
+            services.AddScoped<MaskService>();
             services.AddScoped<MaskContext>();
 
             services.AddHangfire(configuration => configuration
