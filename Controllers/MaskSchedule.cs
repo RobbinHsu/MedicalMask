@@ -20,7 +20,7 @@ namespace MedicalMask.Controllers
             if (_maskContext.MedicalMasks.FirstOrDefault() == null)
             {
                 var maskInfos = await _maskService.GetMaskInfo();
-                await _maskContext.AddRangeAsync(maskInfos);
+                await _maskContext.AddRangeAsync(maskInfos.ConvertToMedicalMasks());
                 await _maskContext.SaveChangesAsync();
             }
         }
@@ -34,16 +34,17 @@ namespace MedicalMask.Controllers
             if (nextTime < nowTime)
             {
                 var maskInfos = await this._maskService.GetMaskInfo();
-                var sourceTime = DateTime.Parse(maskInfos.First().來源資料時間);
+                var infos = maskInfos.ToList();
+                var sourceTime = DateTime.Parse(infos.First().來源資料時間);
 
                 if (sourceTime.CompareTo(updateTime) != 0)
                 {
                     _maskContext.RemoveRange(this._maskContext.MedicalMasks);
-                    await _maskContext.AddRangeAsync(maskInfos);
+                    await _maskContext.AddRangeAsync(infos.ConvertToMedicalMasks());
                 }
-            }
 
-            await this._maskContext.SaveChangesAsync();
+                await this._maskContext.SaveChangesAsync();
+            }
         }
     }
 }
